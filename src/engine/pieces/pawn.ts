@@ -10,10 +10,24 @@ export default class Pawn extends Piece {
 
     public getAvailableMoves(board: Board) {
         const position: Square = board.findPiece(this);
+        const availableMoves: Square[] = [];
 
-        if (this.player === Player.WHITE)
-            return [new Square(Math.min(8, position.row + 1), position.col)];
-        else
-            return [new Square(Math.max(0, position.row - 1), position.col)];
+        if (this.player === Player.WHITE) {
+            // Make white pawn move one square up
+            availableMoves.push(new Square(Math.min(8, position.row + 1), position.col));
+
+            // If first move, make white pawn move two squares up
+            if (position.row === 1)
+                availableMoves.push(new Square(Math.min(8, position.row + 2), position.col));
+        } else {
+            // Make black pawn move one square down
+            availableMoves.push(new Square(Math.max(0, position.row - 1), position.col));
+
+            // If first move, make black pawn move two squares down
+            if (position.row === 6)
+                availableMoves.push(new Square(Math.max(0, position.row - 2), position.col));
+        }
+
+        return availableMoves;
     }
 }
