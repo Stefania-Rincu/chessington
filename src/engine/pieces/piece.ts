@@ -9,16 +9,6 @@ export default class Piece {
         this.player = player;
     }
 
-    // Function to check that a piece is not placed outside the board
-    public isNotOutside(cell: number): boolean {
-        return cell >= 0 && cell < 8;
-    }
-
-    // Function that checks if a square is empty
-    public isSquareEmpty(board: Board, row: number, col: number): boolean {
-        return (!(board.getPiece(new Square(row, col)) instanceof Piece));
-    }
-
     public getAvailableMoves(board: Board) {
         throw new Error('This method must be implemented, and return a list of available moves');
     }
