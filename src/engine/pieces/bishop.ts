@@ -16,7 +16,7 @@ export default class Bishop extends Piece {
         const backwardMoves: Square[] = [];
 
         // Complete moves diagonally
-        for (let i: number = 0; i < 7; i ++) {
+        for (let i: number = 0; i < 8; i ++) {
             const j: number = Math.abs(position.row - position.col) + i;
             const k: number = position.col + position.row - i;
 
