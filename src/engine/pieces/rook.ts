@@ -3,6 +3,16 @@ import Player from '../player';
 import Board from '../board';
 import Square from '../square';
 
+// Function to check that a piece is not placed outside the board
+function isValid(cell: number, step: number): boolean {
+    return (cell + step < 8 && cell + step >= 0);
+}
+
+// Function that checks if a square is empty
+function isEmpty(row: number, col: number, board: Board): boolean {
+    return (!(board.getPiece(new Square(row, col)) instanceof Piece));
+}
+
 export default class Rook extends Piece {
     public constructor(player: Player) {
         super(player);
@@ -11,18 +21,21 @@ export default class Rook extends Piece {
     public getAvailableMoves(board: Board) {
         const position: Square = board.findPiece(this);
 
-        // Define lists for horizontal and vertical movements
-        const availableMovesH: Square[] = [];
-        const availableMovesV: Square[] = [];
+        const moves: number[][] = [[1, 0], [-1, 0], [0, 1], [0, -1]];
+        const availableMoves: Square[] = [];
 
-        // Complete movements excluding just the square where the rook is placed
-        for (let i: number = 0; i < 8; i++) {
-            if (i != position.col)
-                availableMovesH.push(new Square(position.row, i));
-            if (i != position.row)
-                availableMovesV.push(new Square(i, position.col));
+        for (const move of moves) {
+            let row: number = position.row;
+            let col: number = position.col;
+
+            while (isValid(row, move[0]) && isValid(col, move[1]) && isEmpty(row + move[0], col + move[1], board)) {
+                row += move[0];
+                col += move[1];
+
+                availableMoves.push(new Square(row, col));
+            }
         }
 
-        return availableMovesH.concat(availableMovesV);
+        return availableMoves;
     }
 }
