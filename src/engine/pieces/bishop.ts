@@ -2,6 +2,7 @@ import Piece from './piece';
 import Player from '../player';
 import Board from '../board';
 import Square from '../square';
+import King from "./king";
 
 
 export default class Bishop extends Piece {
@@ -26,6 +27,16 @@ export default class Bishop extends Piece {
                 col += dir[1];
 
                 availableMoves.push(new Square(row, col));
+            }
+
+            // If the last cell was not empty and still inside the board
+            if (this.isNotOutside(row + dir[0]) && this.isNotOutside(col + dir[1]) && ! this.isSquareEmpty(board, row + dir[0], col + dir[1])) {
+                // Get the piece on the square
+                const otherPiece = board.getPiece(new Square(row + dir[0], col + dir[1]));
+
+                // If from other player and not king, take it
+                if (otherPiece?.player != this.player && ! (otherPiece instanceof King))
+                    availableMoves.push(new Square(row + dir[0], col + dir[1]));
             }
         }
         return availableMoves;
