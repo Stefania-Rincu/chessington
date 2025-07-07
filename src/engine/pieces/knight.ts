@@ -2,6 +2,8 @@ import Piece from './piece';
 import Player from '../player';
 import Board from '../board';
 import Square from '../square';
+import King from './king';
+
 
 export default class Knight extends Piece {
     public constructor(player: Player) {
@@ -10,21 +12,28 @@ export default class Knight extends Piece {
 
     public getAvailableMoves(board: Board) {
         const position: Square = board.findPiece(this);
-        // Knight -> L movement -> two squares (row / col), then another one (col / row)
-        const moves1: number[] = [-2, 2];
-        const moves2: number[] = [-1, 1];
 
-        // Define available movements
+        // Define possible movements (directions)
+        const directions: number[][] = [[2, 1], [2, -1], [-2, 1], [-2, -1], [1, 2], [-1, 2], [1, -2], [-1, -2]];
         const availableMoves: Square[] = [];
 
-        // Simulate the L movement -> moves two squares on row / col and another one on col / row
-        for (let i: number = 0; i < moves1.length; i++) {
-            for (let j: number = 0; j < moves2.length; j++) {
-                if (this.isNotOutside(position.row + moves1[i]) && this.isNotOutside(position.col + moves2[j]))
-                    availableMoves.push(new Square(position.row + moves1[i], position.col + moves2[j]));
+        // For each possible direction generate movements
+        for (const dir of directions) {
+            let row: number = position.row;
+            let col: number = position.col;
 
-                if (this.isNotOutside(position.col + moves1[i]) && this.isNotOutside(position.row + moves2[j]))
-                    availableMoves.push(new Square(position.row + moves2[j], position.col + moves1[i]));
+            // Add constraints to respect rules
+            if (this.isNotOutside(row + dir[0]) && this.isNotOutside(col + dir[1]) && this.isSquareEmpty(board, row + dir[0], col + dir[1]))
+                availableMoves.push(new Square(row + dir[0], col + dir[1]));
+
+            // If the cell is not empty, but it's inside the board
+            if (this.isNotOutside(row + dir[0]) && this.isNotOutside(col + dir[1]) && !this.isSquareEmpty(board, row + dir[0], col + dir[1])) {
+                // Get the piece on the square
+                const otherPiece = board.getPiece(new Square(row + dir[0], col + dir[1]));
+
+                // If from other player and not king, take it
+                if (otherPiece?.player != this.player && !(otherPiece instanceof King))
+                    availableMoves.push(new Square(row + dir[0], col + dir[1]));
             }
         }
 
