@@ -11,9 +11,7 @@ export default class Rook extends Piece {
     }
 
     public getAvailableMoves(board: Board) {
-        // Get current position
         const position: Square = board.findPiece(this);
-        // Define possible moves (directions)
         const directions: number[][] = [[1, 0], [-1, 0], [0, 1], [0, -1]];
         return findAvailableMovesIterative(board, directions, position, this.player);
     }

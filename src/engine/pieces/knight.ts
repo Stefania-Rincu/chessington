@@ -12,8 +12,6 @@ export default class Knight extends Piece {
 
     public getAvailableMoves(board: Board) {
         const position: Square = board.findPiece(this);
-
-        // Define possible movements (directions)
         const directions: number[][] = [[2, 1], [2, -1], [-2, 1], [-2, -1], [1, 2], [-1, 2], [1, -2], [-1, -2]];
         return findAvailableMovesNotIterative(board, directions, position, this.player);
     }

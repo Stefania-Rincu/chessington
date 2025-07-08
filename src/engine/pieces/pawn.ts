@@ -13,44 +13,33 @@ export default class Pawn extends Piece {
     public getAvailableMoves(board: Board) {
         const position: Square = board.findPiece(this);
         const availableMoves: Square[] = [];
-        let directions: number[][];
 
-        if (this.player === Player.WHITE) {
-            // Make white pawn move one square up
-            if (isNotOutside(new Square(position.row + 1, position.col)) && isSquareEmpty(board, new Square(position.row + 1, position.col))) {
-                availableMoves.push(new Square(position.row + 1, position.col));
+        let mapMoves = new Map<Player, number[][]>([
+            [Player.WHITE, [[1, 0], [2, 0], [1, -1], [1, 1]]],
+            [Player.BLACK, [[-1, 0], [-2, 0], [-1, -1], [-1, 1]]]
+        ]);
 
-                // If first move, make white pawn move two squares up
-                if (position.row === 1 && isNotOutside(new Square(position.row + 2, position.col)) && isSquareEmpty(board, new Square(position.row + 2, position.col)))
-                    availableMoves.push(new Square(position.row + 2, position.col));
+        const moves = mapMoves.get(this.player);
+
+        if (moves != undefined) {
+            if (isNotOutside(new Square(position.row + moves[0][0], position.col)) && isSquareEmpty(board, new Square(position.row + moves[0][0], position.col))) {
+                availableMoves.push(new Square(position.row + moves[0][0], position.col));
+
+                if (((position.row === 1 && this.player === Player.WHITE) || (position.row === 6 && this.player === Player.BLACK))
+                    && isNotOutside(new Square(position.row + moves[1][0], position.col)) && isSquareEmpty(board, new Square(position.row + moves[1][0], position.col)))
+                    availableMoves.push(new Square(position.row + moves[1][0], position.col));
             }
 
-            directions = [[1, -1], [1, 1]];
-        } else {
-            // Make black pawn move one square down
-            if (isNotOutside(new Square(position.row - 1, position.col)) && isSquareEmpty(board, new Square(position.row - 1, position.col))) {
-                availableMoves.push(new Square(position.row - 1, position.col));
+            // Can move diagonally only if a piece is there
+            for (let i: number = 2; i < moves.length; i++) {
+                if (isNotOutside(new Square(position.row + moves[i][0], position.col + moves[i][1])) && !isSquareEmpty(board, new Square(position.row + moves[i][0], position.col + moves[i][1]))) {
+                    const otherPiece = board.getPiece(new Square(position.row + moves[i][0], position.col + moves[i][1]));
 
-                // If first move, make black pawn move two squares down
-                if (position.row === 6 && isNotOutside(new Square(position.row - 2, position.col)) && isSquareEmpty(board, new Square(position.row - 2, position.col)))
-                    availableMoves.push(new Square(position.row - 2, position.col));
+                    if (otherPiece?.player != this.player && !(otherPiece instanceof King))
+                        availableMoves.push(new Square(position.row + moves[i][0], position.col + moves[i][1]));
+                }
             }
-
-            directions = [[-1, -1], [-1, 1]];
         }
-
-        // Can move diagonally only if a piece is there
-        for (const dir of directions)
-            // If the last cell was not empty and still inside the board
-            if (isNotOutside(new Square(position.row + dir[0], position.col + dir[1])) && ! isSquareEmpty(board, new Square(position.row + dir[0], position.col + dir[1]))) {
-                // Get the piece on the square
-                const otherPiece = board.getPiece(new Square(position.row + dir[0], position.col + dir[1]));
-
-                // If from other player and not king, take it
-                if (otherPiece?.player != this.player && ! (otherPiece instanceof King))
-                    availableMoves.push(new Square(position.row + dir[0], position.col + dir[1]));
-            }
-
         return availableMoves;
     }
 }

@@ -12,8 +12,6 @@ export default class Bishop extends Piece {
 
     public getAvailableMoves(board: Board) {
         const position: Square = board.findPiece(this);
-
-        // Define possible movements (directions)
         const directions: number[][] = [[-1, -1], [1, 1], [-1, 1], [1, -1]];
         return findAvailableMovesIterative(board, directions, position, this.player);
     }

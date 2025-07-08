@@ -12,8 +12,6 @@ export default class King extends Piece {
 
     public getAvailableMoves(board: Board) {
         const position: Square = board.findPiece(this);
-
-        // Define possible movements (directions)
         const directions: number[][] = [[-1, 0], [1, 0], [0, 1], [0, -1], [-1, 1], [1, -1], [1, 1], [-1, -1]];
         return findAvailableMovesNotIterative(board, directions, position, this.player);
     }
